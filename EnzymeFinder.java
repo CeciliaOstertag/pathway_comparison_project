@@ -47,17 +47,31 @@ public class EnzymeFinder
         // Get a geneproduct from the list
         //System.out.println(gp.getLabel()); // code de verification pour voir que les labels sont bien printee.
 
-        enzymeList.add(gp.getLabel()); // Adds Label element of gp to enzymeList.
+        //enzymeList.add(gp.getLabel()); // Adds Label element of gp to enzymeList.
         // label element coresponds to BiGG ID.
 
         // Is there a way to get the identifier.org ids directly ?
         // is there a more direct way of
         // transforming ListOfGenePrducts to an ArrayList ?
         // Haven't found one yet...
+        
+        String annotationString = gp.getAnnotationString();
+
+        int indexNcbiGI = annotationString.indexOf("ncbigi/") + 10;
+        int indexEnd = annotationString.indexOf("\"",indexNcbiGI);
+        if(indexNcbiGI != -1 && indexEnd != -1){
+          String ncbigi = annotationString.substring(indexNcbiGI,indexEnd); // trouve l'id GI
+          enzymeList.add(ncbigi);
+          System.out.println(ncbigi);
+        }
+        else
+        {
+          System.out.println("No Annotation data...");
+        }
 
 
     }
-    System.out.println("Les enzymes ont ete trouvees");
+    System.out.println(enzymeList.size()+" enzymes ont ete trouvees");
   }
   // Code de verification. L'on devrait
   // techniquement aussi verifier la presence du plugin fbc,

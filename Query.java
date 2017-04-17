@@ -27,27 +27,13 @@ public class Query{
 	protected String idstring=""; //id de l'enzyme
 	protected String finalUrl=""; //url qui permet de telecharger le fichier 
 	protected String enzymeBiggId ; //id bigg de l'enzyme
-	protected String enzymeNcbiId;
-	protected String organism; 
-	protected String sequenceType;
+	protected String enzymeNcbiId; 
 	protected String dataBase ; //NCBI Gene ou Protein
 	protected String fastaFile ; //nom du fichier fasta qui sera telecharge
 	
-	public Query(String enzymeBiggId, String organism, String sequenceType){	
+	public Query(String enzymeBiggId){	
 		this.enzymeBiggId= enzymeBiggId;
-		this.organism=organism;
-		this.sequenceType=sequenceType;
-		if (sequenceType.equals("nucleic")){
-				dataBase = EntrezSearch.DB_GENE; }
-		else if (sequenceType.equals("proteic"))
-		{
-			dataBase = EntrezSearch.DB_PROTEIN;
-		}
-		else
-		{
-			System.out.println("Erreur : ce type de sequence est inconnu : "+sequenceType);
-			System.exit(1);
-		}
+		dataBase = EntrezSearch.DB_PROTEIN;
 	}
 			
 	//on remet les parsers pour eviter les bugs
@@ -86,9 +72,7 @@ public class Query{
 		
 		search.setDatabase(dataBase);
 		
-		search.setTerm(enzymeBiggId+" "+organism);
-		
-		//search.setSearchField("affl");
+		search.setTerm(enzymeBiggId);
 		
 		search.setMaxRetrieval(1);
 				
@@ -157,7 +141,7 @@ public class Query{
 		
 		try{
 		
-		    Thread.sleep(1000);
+		    Thread.sleep(100);
 		
 		}catch(InterruptedException e){
 		
@@ -166,7 +150,8 @@ public class Query{
 		    throw new Exception(e);
 		
 		}
-		
+		try
+		{
 			EntrezFetch fetch = new EntrezFetch(search);
 			fetch.setRetType("fasta"); //format fasta
 			fetch.setRetMode("text"); //telechargera le fichier
@@ -191,22 +176,17 @@ public class Query{
 				   }						
 			    }
 			});
-
-			//System.out.println(finalUrl);
 			
 			
 			fastaFile=download(finalUrl, fastaName);
 			System.out.println("Fichier fasta téléchargé");
 			System.out.println(fastaFile);
-			if (sequenceType.equals("proteic"))
-			{
-				readProtFasta(fastaFile);
-			}
-			else
-			{			
-				readDNAFasta(fastaFile);
-				}
-
+			readProtFasta(fastaFile);
+		}
+		catch (Exception e)
+		{
+			System.out.println(e);
+		}
 	}
 	
 		
@@ -245,7 +225,6 @@ public class Query{
 			}
 
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -260,7 +239,6 @@ public class Query{
 			}
 
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
