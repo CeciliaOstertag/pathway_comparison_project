@@ -36,11 +36,11 @@ public class PathwayComparisonProject {
 																// bacterie2
 		ArrayList<String> fileNames1 = new ArrayList<String>();
 		ArrayList<String> fileNames2 = new ArrayList<String>();
-		String sbml1;
-		String sbml2;
+		String sbml1 = null;
+		String sbml2 = null;
 		String multifasta1 = null;
 		String multifasta2 = null;
-		String orthologFile;
+		String orthologFile = null;
 
 		System.out.println("Possedez vous deja les fichiers multifasta ? (O/N) ");
 		String ans = string_input();
@@ -110,6 +110,8 @@ public class PathwayComparisonProject {
 			System.exit(1);
 		}
 
+		addOrthologyInfo(sbml1, orthologFile, corresp1, "ref_sbml.xml");
+		addOrthologyInfo(sbml2, orthologFile, corresp2, "query_sbml.xml");
 	}
 
 	/**
@@ -272,10 +274,10 @@ public class PathwayComparisonProject {
 	 **/
 	public static String findOrthologs(String multifasta1, String multifasta2, String de) {
 
-		String orthologFile = "./orthologs.txt";
+		String orthologFile = "orthologs.txt";
 		Runtime runtime = Runtime.getRuntime();
-		String commande = "rsd_search -q " + multifasta1 + " --subject-genome=" + multifasta2 + " -o " + orthologFile
-				+ " --de " + de;
+		String commande = "rsd_search -q " + multifasta1 + " --subject-genome=" + multifasta2 + " -o " + "./"
+				+ orthologFile + " --de " + de;
 		try {
 			Process p = runtime.exec(commande);
 			BufferedReader output = new BufferedReader(new InputStreamReader(p.getInputStream()));
@@ -302,7 +304,8 @@ public class PathwayComparisonProject {
 	}
 
 	/**
-	 * Makes query at NCBI databank to retrive fasta files associated with NCBI Protein GI corresponding to enzymes
+	 * Makes query at NCBI databank to retrive fasta files associated with NCBI
+	 * Protein GI corresponding to enzymes
 	 * 
 	 * @param biggIdsList
 	 *            : list of BiGG ids (Protein GI) of one bacteria
@@ -329,15 +332,32 @@ public class PathwayComparisonProject {
 				fileNames.add(fileName);
 				corresp.put(enzymeBiggId, enzymeNcbiId);
 				bf.write(enzymeBiggId + "\t" + enzymeNcbiId + "\n");
-				System.out.println("Les correspondances se trouvent dans le fichier "+organism+"_correspondances.txt");
-			} catch (Exception e) {
+			} catch (StringIndexOutOfBoundsException e){
+				e.printStackTrace();
+			}
+			catch (Exception e) {
 				System.out.println(e);
+				e.printStackTrace();
 				System.exit(1);
 			}
 		}
 		bf.flush();
 		bf.close();
 		System.out.println("Toutes les requetes ont été effectuees");
+		System.out.println("Les correspondances se trouvent dans le fichier " + organism + "_correspondances.txt");
 		return fileNames;
+	}
+
+	public static void addOrthologyInfo(String sbmlFile, String orthologFile, Hashtable<String, String> corresp, String outputName) {
+
+		RsdResultsParser parser = new RsdResultsParser(orthologFile);
+		parser.findOrthologList();
+		ArrayList<String> lref = parser.getOrthtologListRef();
+		ArrayList<String> lquery = parser.getOrthtologListQuery();
+
+		SbmlAnnotator annotator = new SbmlAnnotator(sbmlFile, lref, lquery, corresp);
+		annotator.annotateName(outputName);
+
+		System.out.println("Fichier SBML annote");
 	}
 }

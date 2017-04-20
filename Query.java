@@ -165,6 +165,7 @@ public class Query {
 			readProtFasta(fastaFile);
 		} catch (Exception e) {
 			System.out.println(e);
+			e.printStackTrace();
 		}
 	}
 	
@@ -209,6 +210,8 @@ public class Query {
 			helper = FastaReaderHelper.readFastaProteinSequence(file);
 			for (Entry<String, ProteinSequence> entry : helper.entrySet()) {
 				enzymeNcbiId = entry.getValue().getAccession().toString();
+				String[] fields = enzymeNcbiId.split(" ");
+				enzymeNcbiId = fields[0];
 			}
 
 		} catch (IOException e) {

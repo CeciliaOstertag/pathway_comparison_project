@@ -30,7 +30,7 @@ public class EnzymeFinder {
 	}
 	
 	/**
-	 * Parses the SBML file and gets all occurences of Protein GI
+	 * Parses the SBML file and gets all occurrences of Protein GI
 	 * 
 	 **/
 
@@ -58,6 +58,7 @@ public class EnzymeFinder {
 		System.out.println(enzymeList.size() + " enzymes ont ete trouvees");
 	}
 
+	
 	// Code de verification. L'on devrait
 	// techniquement aussi verifier la presence du plugin fbc,
 	// mais je suis pas encore sur comment.
@@ -91,4 +92,5 @@ public class EnzymeFinder {
 			System.exit(1);
 		}
 	}
+	
 }
