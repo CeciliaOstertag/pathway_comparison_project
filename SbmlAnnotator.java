@@ -15,8 +15,9 @@ import org.sbml.libsbml.SBMLWriter;
  * This class is used to add enzyme orthology information to a given sbml file.
  * The information is added in the attribute "name" of each fbc:GeneProduct
  * element of the model. The annotation syntax is as follows : - for orthologs :
- * <NCBI Id of enzyme from reference genome>/<NCBI Id of enzyme from subject
- * genome> - for non-orthologs : <NCBI Id of enzyme from current genome>
+ * ortho:<NCBI Id of enzyme from reference genome>/<NCBI Id of enzyme from
+ * subject genome> - for non-orthologs : [ref|query]:<NCBI Id of enzyme from
+ * current genome>
  * 
  * @see Query
  * @see EnzymeFinder
@@ -49,6 +50,7 @@ public class SbmlAnnotator {
 
 	public void annotateName(String outputName) {
 
+		String reference = outputName.split("_")[0];
 		SBMLReader reader = new SBMLReader();
 		SBMLWriter writer = new SBMLWriter();
 		SBMLDocument doc = reader.readSBML(sbmlFile);
@@ -69,17 +71,18 @@ public class SbmlAnnotator {
 				if (orthologListRef.contains(ncbiId)) {
 					nb_ortho++;
 					int index = orthologListRef.indexOf(ncbiId);
-					gp.setName(orthologListRef.get(index) + "/" + orthologListQuery.get(index));
+					gp.setName("ortho:" + orthologListRef.get(index) + "/" + orthologListQuery.get(index));
 				} else if (orthologListQuery.contains(ncbiId)) {
 					nb_ortho++;
 					int index = orthologListQuery.indexOf(ncbiId);
-					gp.setName(orthologListRef.get(index) + "/" + orthologListQuery.get(index));
-				} else {
+					gp.setName("ortho:" + orthologListRef.get(index) + "/" + orthologListQuery.get(index));
+				} else if (ncbiId != null) {
 					nb_other++;
-					gp.setName(ncbiId);
+					gp.setName(reference + ":" + ncbiId);
 				}
 			} else {
-				System.out.println("Le GI n'a pas ete trouve...");
+				nb_other++;
+				// System.out.println("Le GI n'a pas ete trouve...");
 			}
 		}
 		model.setName(outputName);

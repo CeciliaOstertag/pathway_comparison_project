@@ -34,7 +34,7 @@ public class EnzymeFinder {
 	}
 	
 	/**
-	 * Parses the SBML file and gets all occurrences of Protein GI
+	 * Parses the SBML file and gets all occurrences of NCBI Protein GI
 	 * 
 	 **/
 

@@ -1,11 +1,11 @@
 package com.github.pathway_comparison_project;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.ConnectException;
+import java.net.UnknownHostException;
 import java.util.Map.Entry;
 import java.util.*;
 
@@ -21,54 +21,44 @@ import org.biojava.nbio.core.sequence.io.FastaWriterHelper;
  * @see RsdResultsParser
  * @see SbmlAnnotator
  * 
- * @author Peter Bock, Guillamaury Debras, Mercia Ngoma-Komb, Cécilia Ostertag, Franck Soubes
+ * @author Peter Bock, Guillamaury Debras, Mercia Ngoma-Komb, Cécilia Ostertag,
+ *         Franck Soubes
  */
 
 public class PathwayComparisonProject {
-	
+
 	/**
 	 * Chargement de la bibliotheque native libsbml
 	 */
-	static
-	  {
-	    try
-	    {
-	      System.loadLibrary("sbmlj");
-	      Class.forName("org.sbml.libsbml.libsbml");
-	    }
-	    catch (UnsatisfiedLinkError e)
-	    {
-	      System.err.println("Error encountered while attempting to load libSBML:");
-	      System.err.println("Please check the value of your "
-	                         + (System.getProperty("os.name").startsWith("Mac OS")
-	                            ? "DYLD_LIBRARY_PATH" : "LD_LIBRARY_PATH") +
-	                         " environment variable and/or your" +
-	                         " 'java.library.path' system property (depending on" +
-	                         " which one you are using) to make sure it list the" +
-	                         " directories needed to find the " +
-	                         System.mapLibraryName("sbmlj") + " library file and" +
-	                         " libraries it depends upon (e.g., the XML parser).");
-	      System.exit(1);
-	    }
-	    catch (ClassNotFoundException e)
-	    {
-	      System.err.println("Error: unable to load the file 'libsbmlj.jar'." +
-	                         " It is likely that your -classpath command line " +
-	                         " setting or your CLASSPATH environment variable " +
-	                         " do not include the file 'libsbmlj.jar'.");
-	      e.printStackTrace();
+	static {
+		try {
+			System.loadLibrary("sbmlj");
+			Class.forName("org.sbml.libsbml.libsbml");
+		} catch (UnsatisfiedLinkError e) {
+			System.err.println("Error encountered while attempting to load libSBML:");
+			System.err
+					.println("Please check the value of your "
+							+ (System.getProperty("os.name").startsWith("Mac OS") ? "DYLD_LIBRARY_PATH"
+									: "LD_LIBRARY_PATH")
+							+ " environment variable and/or your" + " 'java.library.path' system property (depending on"
+							+ " which one you are using) to make sure it list the" + " directories needed to find the "
+							+ System.mapLibraryName("sbmlj") + " library file and"
+							+ " libraries it depends upon (e.g., the XML parser).");
+			System.exit(1);
+		} catch (ClassNotFoundException e) {
+			System.err.println("Error: unable to load the file 'libsbmlj.jar'."
+					+ " It is likely that your -classpath command line "
+					+ " setting or your CLASSPATH environment variable " + " do not include the file 'libsbmlj.jar'.");
+			e.printStackTrace();
 
-	      System.exit(1);
-	    }
-	    catch (SecurityException e)
-	    {
-	      System.err.println("Error encountered while attempting to load libSBML:");
-	      e.printStackTrace();
-	      System.err.println("Could not load the libSBML library files due to a"+
-	                         " security exception.\n");
-	      System.exit(1);
-	    }
-	  }
+			System.exit(1);
+		} catch (SecurityException e) {
+			System.err.println("Error encountered while attempting to load libSBML:");
+			e.printStackTrace();
+			System.err.println("Could not load the libSBML library files due to a" + " security exception.\n");
+			System.exit(1);
+		}
+	}
 
 	public static void main(String[] args) throws IOException {
 		Hashtable<String, String> corresp1 = new Hashtable<>(); // correspondances
@@ -89,73 +79,58 @@ public class PathwayComparisonProject {
 		String multifasta2 = null;
 		String orthologFile = null;
 
+		System.out.println("\tPATHWAY COMPARISON PROJECT\n\n");
+		
 		while (true) {
-			System.out.println("Possedez vous deja les fichiers multifasta ? (O/N) ");
-			String ans = string_input();
-
-			if (ans.equals("O")) {
-				System.out.println("Chemin du fichier multifasta de reference : ");
-				multifasta1 = string_input();
-				System.out.println("Chemin du deuxieme fichier multifasta : ");
-				multifasta2 = string_input();
-				break;
-			} else if (ans.equals("N")) {
-
-				while (true) {
-					System.out.println("Chemin du fichier SBML de référence : ");
-					sbml1 = string_input();
-					if (!new File(sbml1).isFile()) {
-						System.out.println("Erreur, chemin invalide");
-					} else {
-						break;
-					}
-				}
-				System.out.println("Nom de l'organisme de référence : ");
-				String organism1 = string_input();
-
-				while (true) {
-					System.out.println("Chemin du second fichier SBML : ");
-					sbml2 = string_input();
-					if (!new File(sbml2).isFile()) {
-						System.out.println("Erreur, chemein invalide");
-					} else {
-						break;
-					}
-				}
-				System.out.println("Nom du second organisme : ");
-				String organism2 = string_input();
-
-				ArrayList<String> biggIdsList1 = findEnzymes(sbml1);
-
-				File tmp = new File("./Tmp");
-				tmp.mkdir();
-
-				long startTime1 = System.currentTimeMillis();
-				fileNames1 = enzymesQuery(organism1, biggIdsList1, corresp1, "Tmp/results1");
-				long estimatedTime1 = System.currentTimeMillis() - startTime1;
-				System.out.println("Temps (ms) : " + estimatedTime1);
-
-				File dir = new File("./FastaFiles");
-				dir.mkdir();
-				String outputName1 = "FastaFiles/" + organism1.replaceAll(" ", "_") + ".fasta";
-				multifasta1 = makeMultifasta(fileNames1, outputName1);
-
-				ArrayList<String> biggIdsList2 = findEnzymes(sbml2);
-
-				long startTime2 = System.currentTimeMillis();
-				fileNames2 = enzymesQuery(organism2, biggIdsList2, corresp2, "Tmp/results2");
-				long estimatedTime2 = System.currentTimeMillis() - startTime2;
-				System.out.println("Temps (ms) : " + estimatedTime2);
-
-				String outputName2 = "FastaFiles/" + organism2.replaceAll(" ", "_") + ".fasta";
-				multifasta2 = makeMultifasta(fileNames2, outputName2);
-
-				removeDirectory(tmp);
-				break;
+			System.out.println("Chemin du fichier SBML de référence : ");
+			sbml1 = string_input();
+			if (!new File(sbml1).isFile()) {
+				System.out.println("Erreur, chemin invalide");
 			} else {
-				System.out.println("Erreur");
+				break;
 			}
 		}
+		System.out.println("Nom de l'organisme de référence : ");
+		String organism1 = string_input();
+
+		while (true) {
+			System.out.println("Chemin du second fichier SBML : ");
+			sbml2 = string_input();
+			if (!new File(sbml2).isFile()) {
+				System.out.println("Erreur, chemein invalide");
+			} else {
+				break;
+			}
+		}
+		System.out.println("Nom du second organisme : ");
+		String organism2 = string_input();
+
+		ArrayList<String> biggIdsList1 = findEnzymes(sbml1);
+
+		File tmp = new File("./Tmp");
+		tmp.mkdir();
+
+		long startTime1 = System.currentTimeMillis();
+		fileNames1 = enzymesQuery(organism1, biggIdsList1, corresp1, "Tmp/results1");
+		long estimatedTime1 = System.currentTimeMillis() - startTime1;
+		System.out.println("Temps (ms) : " + estimatedTime1);
+
+		File dir = new File("./FastaFiles");
+		dir.mkdir();
+		String outputName1 = "FastaFiles/" + organism1.replaceAll(" ", "_") + ".fasta";
+		multifasta1 = makeMultifasta(fileNames1, outputName1);
+
+		ArrayList<String> biggIdsList2 = findEnzymes(sbml2);
+
+		long startTime2 = System.currentTimeMillis();
+		fileNames2 = enzymesQuery(organism2, biggIdsList2, corresp2, "Tmp/results2");
+		long estimatedTime2 = System.currentTimeMillis() - startTime2;
+		System.out.println("Temps (ms) : " + estimatedTime2);
+
+		String outputName2 = "FastaFiles/" + organism2.replaceAll(" ", "_") + ".fasta";
+		multifasta2 = makeMultifasta(fileNames2, outputName2);
+
+		removeDirectory(tmp);
 
 		while (true) {
 			System.out.println(
@@ -221,6 +196,14 @@ public class PathwayComparisonProject {
 		}
 	}
 
+	/**
+	 * Parses an sbml file and returns a list of all enzymes (fbc:GeneProduct)
+	 * NCBI GI ids found in the file
+	 * 
+	 * @param sbmlFile
+	 *            : path to the sbml file
+	 * @return enzymeList : list of all enzymes NCBI GI ids
+	 **/
 	public static ArrayList<String> findEnzymes(String sbmlFile) {
 		EnzymeFinder finder = new EnzymeFinder(sbmlFile);
 		finder.find();
@@ -389,7 +372,6 @@ public class PathwayComparisonProject {
 	public static ArrayList<String> enzymesQuery(String organism, ArrayList<String> biggIdsList,
 			Hashtable<String, String> corresp, String fastaName) throws IOException {
 		ArrayList<String> fileNames = new ArrayList<String>();
-		BufferedWriter bf = new BufferedWriter(new FileWriter(organism + "_correspondances.txt", true));
 		for (int i = 0; i < biggIdsList.size(); i++) {
 			String newFastaName = fastaName + "_" + i + ".fasta";
 			String enzymeBiggId = biggIdsList.get(i);
@@ -397,26 +379,50 @@ public class PathwayComparisonProject {
 			try {
 				query.execute(newFastaName);
 				String enzymeNcbiId = query.getNcbiId();
-				System.out.println(enzymeNcbiId);
 				String fileName = query.getFileName();
-				fileNames.add(fileName);
 				corresp.put(enzymeBiggId, enzymeNcbiId);
-				bf.write(enzymeBiggId + "\t" + enzymeNcbiId + "\n");
+				fileNames.add(fileName);
 			} catch (StringIndexOutOfBoundsException e) {
 				e.printStackTrace();
-			} catch (Exception e) {
+			} catch (IllegalArgumentException e) {
+				System.out.println("Id non trouve");
+				continue;
+			} catch (UnknownHostException e) {
+				System.out.println("Base de donnees innaccessible, recommencez plus tard");
 				System.out.println(e);
-				e.printStackTrace();
 				System.exit(1);
+			} catch (ConnectException e) {
+				System.out.println("Base de donnees innaccessible, recommencez plus tard");
+				System.out.println(e);
+				System.exit(1);
+			} catch (NullPointerException e) {
+				System.out.println("Erreur lors de la requete");
+				e.printStackTrace();
+				continue;
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		}
-		bf.flush();
-		bf.close();
 		System.out.println("Toutes les requetes ont été effectuees");
-		System.out.println("Les correspondances se trouvent dans le fichier " + organism + "_correspondances.txt");
 		return fileNames;
 	}
 
+	/**
+	 * Add the information about orthology in the attribute "name" of each
+	 * fbc:GeneProduct in the original sbml file, then saves the result in a new
+	 * sbml file
+	 * 
+	 * @param sbmlFile
+	 *            : path to the original sbml file
+	 * @param orthologFile
+	 *            : name of the text file containing the list of ortholog
+	 *            proteins (result of RSD algorithm)
+	 * @param corresp
+	 *            : correspondance between requested BiGG ids (GI) and found
+	 *            NCBI ids
+	 * @param outputName
+	 *            : name of the new sbml file
+	 **/
 	public static void addOrthologyInfo(String sbmlFile, String orthologFile, Hashtable<String, String> corresp,
 			String outputName) {
 
