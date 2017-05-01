@@ -1,2 +1,5 @@
 # pathway_comparison_project
-Test
+INSTALLATION RSD 
+AJOUT libsbmlj.so au librarypath
+EXECUTION DU .JAR
+VISU AVEC CYTOSCAPE
