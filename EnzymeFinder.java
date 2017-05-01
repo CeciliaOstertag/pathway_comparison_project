@@ -22,12 +22,24 @@ import java.util.ArrayList;
 
 public class EnzymeFinder {
 	
+	/*
+	* Path to the sbml file
+	*/
 	protected String sbmlFile;
+	
+	/*
+	* List of NCBI GI ids of all fbc:GeneProduct found in the sbml file
+	*/
 	protected ArrayList<String> enzymeList = new ArrayList<>();
 
 	public EnzymeFinder(String sbmlFile) {
 		this.sbmlFile = sbmlFile;
 	}
+	
+	/*
+	* Returns the list of NCBI GI ids of all fbc:GeneProduct found in the sbml file
+	* @param enzymeList : List of NCBI GI ids of all fbc:GeneProduct found in the sbml file
+	*/
 
 	public ArrayList<String> getEnzymeList() {
 		return enzymeList;

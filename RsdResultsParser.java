@@ -19,8 +19,19 @@ import java.util.ArrayList;
 
 public class RsdResultsParser {
 
+/*
+* Name of the file containing the results of the RSD algorithm
+*/
 	private String orthologFile;
+	
+	/*
+* List of NCBI ids of enzymes from the reference genome
+*/
 	private ArrayList<String> orthologListRef = new ArrayList<>();
+	
+	/*
+* List of NCBI ids of enzymes from the subject genome
+*/
 	private ArrayList<String> orthologListQuery = new ArrayList<>();
 
 	public RsdResultsParser(String orthologFile) {

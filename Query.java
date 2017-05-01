@@ -29,13 +29,36 @@ import com.algosome.eutils.io.*;
 
 public class Query {
 
-	protected String idstring = ""; // id de l'enzyme
-	protected String finalUrl = ""; // url qui permet de telecharger le fichier
-	protected String enzymeBiggId; // id bigg (GI) de l'enzyme
+/*
+* Enzyme EntrezSearch id
+*/
+	protected String idstring = ""; 
+	
+	/*
+* Url used to download the text file
+*/
+	protected String finalUrl = ""; 
+	
+	/*
+* Enzyme NCBI GI id (called BiggId because the sbml file comes from BiGG database)
+*/
+	protected String enzymeBiggId; 
+	
+	/*
+* Enzyme NCBI Protein id 
+*/
 	protected String enzymeNcbiId;
-	protected String dataBase; // DB NCBI
-	protected String fastaFile; // nom du fichier fasta qui sera telecharge
-
+	
+	/*
+* NCBI database to query
+*/
+	protected String dataBase; 
+	
+	/*
+* Name to give to the fasta file when downloading
+*/
+	protected String fastaFile; 
+	
 	/**
 	 * Automated query to NCBI Protein database. Uses a Protein GI id to search
 	 * the corresponding sequence, and download the file in fasta format

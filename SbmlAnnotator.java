@@ -29,9 +29,24 @@ import org.sbml.libsbml.SBMLWriter;
  */
 public class SbmlAnnotator {
 
+/*
+* Path to the sbml file to annotate
+*/
 	protected String sbmlFile;
+	
+	/*
+* List of NCBI ids of enzymes from the reference genome
+*/
 	protected ArrayList<String> orthologListRef = new ArrayList<>();
+	
+	/*
+* List of NCBI ids of enzymes from the subject genome
+*/
 	protected ArrayList<String> orthologListQuery = new ArrayList<>();
+	
+	/*
+* Correspondance between NCBI GI ids of all fbc:GeneProduct and corresponding NCBI ids
+*/
 	protected Hashtable<String, String> corresp = new Hashtable<>();
 
 	public SbmlAnnotator(String sbmlFile, ArrayList<String> orthologListRef, ArrayList<String> orthologListQuery,
