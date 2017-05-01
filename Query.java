@@ -123,7 +123,7 @@ public class Query {
 
 		search.setMaxRetrieval(1);
 
-		search.doQuery(new InputStreamParser() {
+		InputStreamParser myInputStreamParser1 = new InputStreamParser() {
 
 			public void parseFrom(int start) {
 			}
@@ -139,14 +139,10 @@ public class Query {
 				String line = null;
 				while ((line = line_reader.readLine()) != null) {
 					if (line.indexOf("<Id>") != -1) {
-
 						String id = parseID(line);
-
 						if (id != null) {
 							idstring += id + " ";
-							//System.out.println("id trouve :" + id);
 						}
-
 					}
 					// si l'url a change, on remplace la premiere url par la
 					// deuxieme
@@ -158,19 +154,21 @@ public class Query {
 						String line2 = null;
 						while ((line2 = line_reader2.readLine()) != null) {
 							if (line2.indexOf("<Id>") != -1) {
-
 								String id = parseID(line2);
-
 								if (id != null) {
 									idstring += id + " ";
-									//System.out.println("id trouve :" + id);
 								} 
 							}
 						}
 					}
 				}
 			}
-		});
+		};		
+		if ((myInputStreamParser1 != null))
+			search.doQuery(myInputStreamParser1);
+		else
+			System.out.println("myInputStreamParser1 NULL!");
+		
 		if (idstring != "") {
 			search.setIds(idstring); // on donne directement les ids trouves par
 										// le
@@ -187,7 +185,7 @@ public class Query {
 				fetch.setRetType("fasta");
 				fetch.setRetMode("text");
 
-				InputStreamParser myInputStreamParser = new InputStreamParser() {
+				InputStreamParser myInputStreamParser2 = new InputStreamParser() {
 					public void parseFrom(int start) {
 					}
 
@@ -205,20 +203,18 @@ public class Query {
 					}
 				};
 
-				if ((myInputStreamParser != null))
-					fetch.doQuery(myInputStreamParser);
+				if ((myInputStreamParser2 != null))
+					fetch.doQuery(myInputStreamParser2);
 				else
-					System.out.println("myInputStreamParser NULL!");
+					System.out.println("myInputStreamParser2 NULL!");
 
 				fastaFile = download(finalUrl, fastaName);
-				//System.out.println("Fichier fasta télécharge");
 				System.out.println(fastaFile);
 				readProtFasta(fastaFile);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		} else {
-			//System.out.println("id NULL!");
 			throw new IllegalArgumentException();
 		}
 	}
@@ -235,7 +231,6 @@ public class Query {
 	public String download(String url, String fastaName) {
 		Runtime runtime = Runtime.getRuntime();
 		String commande = "wget -O " + fastaName + " " + url;
-
 		try {
 			Process p = runtime.exec(commande);
 			p.waitFor();

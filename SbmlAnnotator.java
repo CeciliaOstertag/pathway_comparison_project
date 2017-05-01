@@ -82,7 +82,6 @@ public class SbmlAnnotator {
 				}
 			} else {
 				nb_other++;
-				// System.out.println("Le GI n'a pas ete trouve...");
 			}
 		}
 		model.setName(outputName);

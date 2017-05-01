@@ -28,7 +28,7 @@ import org.biojava.nbio.core.sequence.io.FastaWriterHelper;
 public class PathwayComparisonProject {
 
 	/**
-	 * Chargement de la bibliotheque native libsbml
+	 * Chargement de la bibliotheque native libsbmlj
 	 */
 	static {
 		try {
@@ -80,7 +80,7 @@ public class PathwayComparisonProject {
 		String orthologFile = null;
 
 		System.out.println("\tPATHWAY COMPARISON PROJECT\n\n");
-		
+
 		while (true) {
 			System.out.println("Chemin du fichier SBML de référence : ");
 			sbml1 = string_input();
@@ -157,6 +157,12 @@ public class PathwayComparisonProject {
 
 		addOrthologyInfo(sbml1, orthologFile, corresp1, "ref_sbml.xml");
 		addOrthologyInfo(sbml2, orthologFile, corresp2, "query_sbml.xml");
+
+		System.out.println("Syntaxe de l'annotation, pour chaque fbc:GeneProduct : \n - Pour les orthologues : "
+				+ "ortho:<Id NCBI de l'enzyme du genome de reference/<Id NCBI de l'enzyme du second genome> "
+				+ "\n- Pour les non-orthologues : [ref|query]:<Id NCBI de l'enzyme du genome courant>");
+		System.out.println("Vous pouvez a present visualiser et comparer ces deux reseaux avec Cytoscape"
+				+ " (operation Merge, sur la base de l'attribut 'name' ");
 	}
 
 	/**
@@ -397,7 +403,7 @@ public class PathwayComparisonProject {
 				System.exit(1);
 			} catch (NullPointerException e) {
 				System.out.println("Erreur lors de la requete");
-				e.printStackTrace();
+				System.out.println(e);
 				continue;
 			} catch (Exception e) {
 				e.printStackTrace();
