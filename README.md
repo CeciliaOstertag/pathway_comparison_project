@@ -42,7 +42,7 @@ Vérifier que ça marche en faisant rsd_search –h depuis un autre emplacement,
 
 Ajouter le chemin vers le fichier libsbmlj.so au LD_LIBRARY_PATH
 
-**Execution du programme**
+**EXECUTION DU PROGRAMME PathwayComparisonProject**
 
 Le programme s'exécute avec : java -jar <nom du jar> 
 Un message d'erreur s'affichera si libsbmlj ne peut pas se charger correctement
@@ -51,6 +51,6 @@ Les fichiers d'entrée doivent être des fichiers SBML Level 3. Après exécutio
   - Pour les orthologues : ortho:<Id NCBI de l'enzyme du genome de reference/<Id NCBI de l'enzyme du second genome>
   - Pour les non-orthologues : [ref|query]:<Id NCBI de l'enzyme du genome courant>
   
-**Visualisation comparative avec Cytoscape**
+**VISUALISATION COMPARATIVE AVEC CYTOSCAPE**
 
 
