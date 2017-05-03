@@ -75,7 +75,7 @@ Pour appliquer un style unique aux orthologues, il faut tout d'abord sélectionn
 
 Ensuite, il est nécessaire de sélectionner l'outil style et plusieurs properties sont affichées.
 
-Afin de modifier la couleur des nœuds sélectionnés, il faut cliquer dans le cadrant Byp (Set bypass). Une fenètre s'affiche pour choisir un panel de couleurs puis cliquer sur ok.
+Afin de modifier la couleur des nœuds sélectionnés, il faut cliquer dans le cadrant Byp vide (Set bypass). Une fenètre s'affiche pour choisir un panel de couleurs puis cliquer sur ok. La tache sera effectuée dans la sous-properties Fill Color.
 
 La même opération est à répéter pour la forme du nœud dans la sous-properties Shape (pour valider cliquer random au niveau du réseau métabolique).
 
