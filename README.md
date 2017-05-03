@@ -52,6 +52,7 @@ Les fichiers d'entrée doivent être des fichiers SBML Level 3. Après exécutio
   - Pour les non-orthologues : [ref|query]:<Id NCBI de l'enzyme du genome courant>
   
 **VISUALISATION COMPARATIVE AVEC CYTOSCAPE**
+
 Pour fusionner deux réseaux métaboliques sur Cytoscape, il est nécessaire d'avoir l'application Cy3sbml disponible ( Apps → App Manager → install dans le menu ).
 
 Une fois les deux SBML importés, la fusion sera réalisée à l'aide de l'outil Merge présent à partir de Tools dans le menu Cytoscape. (Tools → Merge).
