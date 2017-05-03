@@ -52,5 +52,33 @@ Les fichiers d'entrée doivent être des fichiers SBML Level 3. Après exécutio
   - Pour les non-orthologues : [ref|query]:<Id NCBI de l'enzyme du genome courant>
   
 **VISUALISATION COMPARATIVE AVEC CYTOSCAPE**
+Pour fusionner deux réseaux métaboliques sur Cytoscape, il est nécessaire d'avoir l'application Cy3sbml disponible ( Apps → App Manager → install dans le menu ).
 
+Une fois les deux SBML importés, la fusion sera réalisée à l'aide de l'outil Merge présent à partir de Tools dans le menu Cytoscape. (Tools → Merge).
+
+La fusion s'effectue avec l'outil Union au niveau du pop-up affiché à l'écran puis s'assurer que les réseaux à fusionner sont bien dans la rubrique Networks to Merge en utilisant add to select.
+
+La fusion doit se faire au niveau des names, il est donc important de vérifier au niveau des options avancées qu'apparaisse name dans les deux colonnes Matching Columns.
+
+La fusion est finalisée en cliquant sur Merge.
+
+Pour visualiser les orthologues et différencier deux bactéries entre elles (style étant uniforme), différents styles doivent être appliqués (utilisation de Control Panel - Select et Style - situé dans la partie gauche de Cytoscape).
+
+L'outil Select agit comme une expression régulière et va venir parser le sbml pour différents labels présents au niveau de ce dernier (name,ncbigi …).
+
+En utilisant l'outil Select du Control Panel et en sélectionnant l'attribut shared name(+ → column filter → node : shared name), il est possible de sélectionner précisément les nœuds orthologues et les noeuds des bactéries (ref|query).
+
+Exemple :(En utilisant le style Cy3sbml disponible)
+
+Pour appliquer un style unique aux orthologues, il faut tout d'abord sélectionner les nœuds représentant les orthologues, en remplissant « ortho » dans la barre de recherche puis apply.
+
+Ensuite, il est nécessaire de sélectionner l'outil style et plusieurs properties sont affichées.
+
+Afin de modifier la couleur des nœuds sélectionnés, il faut cliquer dans le cadrant Byp (Set bypass). Un pop-up s'affiche pour choisir un panel de couleurs puis cliquer sur ok.
+
+La même opération est à répéter pour la forme du nœud dans la sous-properties Shape (pour valider cliquer random au niveau du réseau métabolique).
+
+Pour différencier deux bactéries, l'opération précédente est à répéter.
+
+Il faut taper « query » dans la barre de recherche dans le but de lui appliquer un nouveau style afin de différencier les nœuds entre les deux bactéries.
 
