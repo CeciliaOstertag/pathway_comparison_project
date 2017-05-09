@@ -61,6 +61,11 @@ public class PathwayComparisonProject {
 	}
 
 	public static void main(String[] args) throws IOException {
+		
+		String fastaDirName = "./FastaFiles"; 
+		String tmpDirName = "./Tmp";
+		String refName = "ref_sbml.xml";
+		String queryName = "query_sbml.xml";
 		Hashtable<String, String> corresp1 = new Hashtable<>(); // correspondances
 																// ids bigg (GI)
 																// /
@@ -107,7 +112,7 @@ public class PathwayComparisonProject {
 
 		ArrayList<String> biggIdsList1 = findEnzymes(sbml1);
 
-		File tmp = new File("./Tmp");
+		File tmp = new File(tmpDirName);
 		tmp.mkdir();
 
 		long startTime1 = System.currentTimeMillis();
@@ -115,7 +120,7 @@ public class PathwayComparisonProject {
 		long estimatedTime1 = System.currentTimeMillis() - startTime1;
 		System.out.println("Temps (ms) : " + estimatedTime1);
 
-		File dir = new File("./FastaFiles");
+		File dir = new File(fastaDirName);
 		dir.mkdir();
 		String outputName1 = "FastaFiles/" + organism1.replaceAll(" ", "_") + ".fasta";
 		multifasta1 = makeMultifasta(fileNames1, outputName1);
@@ -137,7 +142,7 @@ public class PathwayComparisonProject {
 					"Voulez-vous utiliser un seuil de divergence et une evalue differentes des valeurs par defaut (divergence = 0.8 et evalue = 1e-5) ? (O/N)");
 			String ans2 = string_input();
 			if (ans2.equals("O")) {
-				System.out.println("Valeurs de divergence et evalue : ");
+				System.out.println("Valeurs de divergence et evalue (suivre la syntaxe suivante : 0.8 1e-5) ");
 				String de = string_input();
 				long startTime3 = System.currentTimeMillis();
 				orthologFile = findOrthologs(multifasta1, multifasta2, de);
@@ -155,8 +160,8 @@ public class PathwayComparisonProject {
 			}
 		}
 
-		addOrthologyInfo(sbml1, orthologFile, corresp1, "ref_sbml.xml");
-		addOrthologyInfo(sbml2, orthologFile, corresp2, "query_sbml.xml");
+		addOrthologyInfo(sbml1, orthologFile, corresp1, refName);
+		addOrthologyInfo(sbml2, orthologFile, corresp2, queryName);
 
 		System.out.println("Syntaxe de l'annotation, pour chaque fbc:GeneProduct : \n - Pour les orthologues : "
 				+ "ortho:<Id NCBI de l'enzyme du genome de reference/<Id NCBI de l'enzyme du second genome> "
